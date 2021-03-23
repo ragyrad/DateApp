@@ -12,11 +12,11 @@ class Profile(AbstractUser):
     phone = PhoneNumberField(null=False, blank=False, unique=True)
     country = models.CharField(max_length=30)
     city = models.CharField(max_length=30)
-    date_of_birth = models.DateTimeField(default=timezone.now)
+    date_of_birth = models.DateField(default=timezone.now)
     description = models.TextField()
 
     class Meta:
-        ordering = ['first_name']
+        ordering = ('first_name',)
 
     def __str__(self):
         return self.first_name
