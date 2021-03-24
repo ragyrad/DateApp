@@ -3,13 +3,13 @@ from datetime import date
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
-from phonenumber_field.modelfields import PhoneNumberField
+from django.utils.text import slugify
 
 
 class Profile(AbstractUser):
     first_name = models.CharField(max_length=50)
     slug = models.SlugField(max_length=200, unique=True)
-    phone = PhoneNumberField(null=False, blank=False, unique=True)
+    email = models.EmailField(unique=True)
     country = models.CharField(max_length=30)
     city = models.CharField(max_length=30)
     date_of_birth = models.DateField(default=timezone.now)
@@ -20,6 +20,11 @@ class Profile(AbstractUser):
 
     def __str__(self):
         return self.first_name
+
+    def save(self, *args, **kwargs):
+        if not self.pk:   # new object
+            self.slug = slugify(self.pk)
+        super(Profile, self).save(*args, **kwargs)
 
 
 class Photo(models.Model):
