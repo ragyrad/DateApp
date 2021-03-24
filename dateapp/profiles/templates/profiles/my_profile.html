@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+
+{% block title %}
+	My profile
+{% endblock title %}
+
+
+{% block content %}
+    <div class="col-6">
+        <h1>About you</h1>
+        <h3>{{ user.first_name }}, {{ age }}</h3>
+        <h5>{{ user.city }} {{ user.country }}</h5>    
+        <h6>Description:</h6>
+        <p>{{ user.description }}</p> 
+    </div>
+{% endblock content %}
+

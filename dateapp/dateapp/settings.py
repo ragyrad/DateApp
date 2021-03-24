@@ -124,3 +124,7 @@ STATIC_URL = '/static/'
 AUTH_USER_MODEL = 'profiles.Profile'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+LOGIN_REDIRECT_URL = 'profiles:my_profile'
+LOGIN_URL = 'profiles:login'
+LOGOUT_URL = 'profiles:logout'
