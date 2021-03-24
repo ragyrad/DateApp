@@ -25,6 +25,8 @@
 			<input type="hidden" name="next" value="{{ next }}">
 			<button type="submit" class="btn btn-success my-3">Log in</button>
 		</form>
+
+		<p>If you are haven't account you can register <a href="{% url "profiles:register" %}">here</a></p>
     </div>
 
 {% endblock content %}

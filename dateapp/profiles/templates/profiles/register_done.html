@@ -4,5 +4,5 @@
 
 {% block content %}
     <h1>Hello, {{ new_user.first_name }}</h1>
-    <p>You successfully registered. Now you can log in <a href="#">here</a> and start looking for a soul mate.</p>
+    <p>You successfully registered. Now you can log in <a href="{% url "profiles:login" %}">here</a> and start looking for a soul mate.</p>
 {% endblock content %}

@@ -9,7 +9,7 @@ from .models import Profile
 class ProfileCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = Profile
-        fields = ('username', 'first_name', 'email', 'country', 'city', 'date_of_birth')
+        fields = ('username', 'first_name', 'email', 'sex', 'sex_looking_for', 'country', 'city', 'date_of_birth')
 
     def cleaned_date_of_birth(self):
         date_of_birth =  self.cleaned_data['date_of_birth']
