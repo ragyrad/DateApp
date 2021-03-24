@@ -1,5 +1,6 @@
 from datetime import date
 
+from django import forms
 from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
@@ -25,4 +26,10 @@ class ProfileCreationForm(UserCreationForm):
 class ProfileChangeForm(UserChangeForm):
     class Meta:
         model = Profile
-        fields = ('first_name', 'email', 'email', 'country', 'city', 'date_of_birth')
+        fields = ('username', 'first_name', 'email', 'sex', 'sex_looking_for', 'country', 'city', 'date_of_birth')
+
+
+class ProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ('description', 'sex_looking_for',)

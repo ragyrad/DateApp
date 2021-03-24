@@ -1,10 +1,9 @@
 from datetime import date
 
-from django.shortcuts import render
-from django.views.generic import View
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import render, redirect
+from django.views.generic import View, UpdateView
 
-from .forms import ProfileCreationForm
+from .forms import ProfileCreationForm, ProfileEditForm
 
 
 class UserRegisterView(View):
@@ -27,4 +26,14 @@ class MyProfileView(View):
         user = request.user
         age = date.today().year - user.date_of_birth.year - \
               ((date.today().month, date.today().day) < (user.date_of_birth.month, user.date_of_birth.day))
-        return render(request, 'profiles/my_profile.html', {'user': user, 'age': age})
+        form = ProfileEditForm(initial={'description': user.description, 'sex_looking_for': user.sex_looking_for})
+        return render(request, 'profiles/my_profile.html', {'form': form, 'user': user, 'age': age})
+
+    def post(self, request):
+        form = ProfileEditForm(request.POST)
+        if form.is_valid():
+            temp_user = form.save(commit=False)
+            request.user.description = temp_user.description
+            request.user.sex_looking_for = temp_user.sex_looking_for
+            request.user.save()
+            return redirect('profiles:my_profile')
