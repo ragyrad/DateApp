@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import Profile
+from .models import Profile, Photo
 from .forms import ProfileCreationForm, ProfileChangeForm
 
 
@@ -39,3 +39,5 @@ class ProfileAdmin(UserAdmin):
 
 
 admin.site.register(Profile, ProfileAdmin)
+
+admin.site.register(Photo)

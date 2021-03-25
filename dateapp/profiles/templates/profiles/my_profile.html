@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 
+{% load static %}
+{% load thumbnail %}
+
 {% load crispy_forms_tags %}
 
 {% block title %}
@@ -10,6 +13,34 @@
 {% block content %}
     <div class="col-6">
         <h1>About you</h1>
+
+    <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+                {% if not user.photos.all %}
+                    <div class="carousel-item active">
+                        <img src="{% static 'img/default-user-avatar.png' %}" class="d-block w-100">
+                    </div>
+                {% else %}
+                    {% for photo in user.photos.all %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <a href="{{ photo.image.url }}">
+                                <img src="{% thumbnail photo.image 650x650 crop="smart" %}" class="d-block">
+                            </a>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
         <h3>{{ user.first_name }}, {{ age }}</h3>
         <h5>{{ user.city }}, {{ user.country }}</h5>
         <form method="post" novalidate>

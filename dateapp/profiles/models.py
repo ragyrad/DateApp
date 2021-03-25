@@ -31,7 +31,6 @@ class Profile(AbstractUser):
 
 class Photo(models.Model):
     profile = models.ForeignKey(Profile, related_name='photos', on_delete=models.CASCADE)
-    url = models.URLField()
     image = models.ImageField(upload_to='profiles_photo')
     created = models.DateTimeField(auto_now=True)
 
