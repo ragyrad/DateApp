@@ -5,6 +5,7 @@ from django.shortcuts import render, redirect
 from django.core.files.base import ContentFile
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from django import forms
 from .forms import ProfileCreationForm, ProfileEditForm, UploadPhotoForm
 from .models import Photo
 
@@ -50,13 +51,19 @@ class PhotoUploadView(LoginRequiredMixin, View):
 
     def post(self, request):
         form = UploadPhotoForm(request.POST, request.FILES)
+        user_photos = request.user.photos.all()
+        # user can have a maximum of 8 photos
+        if len(user_photos) + len(request.FILES.getlist('photos')) > 8:
+            form.add_error('photos', forms.ValidationError('You can have a maximum of 8 photos.'))
+
         if form.is_valid():
             for f in request.FILES.getlist('photos'):
                 data = f.read()  # If the file fits entirely in memory
                 photo = Photo(profile=request.user)
                 photo.image.save(f.name, ContentFile(data))
                 photo.save()
-        return redirect('profiles:photo_upload')
+            return redirect('profiles:photo_upload')
+        return render(request, 'profiles/upload_photo.html', {'photos': user_photos, 'form': form})
 
 
 class PhotoDeleteView(LoginRequiredMixin, View):

@@ -1,7 +1,6 @@
 from datetime import date
 
 from django import forms
-from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
 from .models import Profile, Photo
@@ -37,3 +36,5 @@ class ProfileEditForm(forms.ModelForm):
 
 class UploadPhotoForm(forms.Form):
     photos = forms.ImageField(widget=forms.FileInput(attrs={'multiple': 'multiple'}))
+
+
