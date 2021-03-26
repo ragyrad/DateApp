@@ -10,7 +10,7 @@
 {% block content %}
     <div class="col-6">
         <h1>Creating an account</h1>
-        <form method="post" novalidate>
+        <form method="post">
             {% csrf_token %}
             {{ form|crispy }}
         <button type="submit" class="btn btn-success">Register</button>

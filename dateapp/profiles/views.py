@@ -21,6 +21,7 @@ class UserRegisterView(View):
             new_user.set_password(form.cleaned_data['password1'])
             new_user.save()
             return render(request, 'profiles/register_done.html', {'new_user': new_user})
+        return render(request, 'profiles/register.html', {'form': form})
 
 
 class MyProfileView(View):
@@ -50,13 +51,11 @@ class PhotoUploadView(View):
     def post(self, request):
         form = UploadPhotoForm(request.POST, request.FILES)
         if form.is_valid():
-            print('=' * 10 + '\nValid\n' + '=' * 10)
             for f in request.FILES.getlist('photos'):
                 data = f.read()  # If the file fits entirely in memory
                 photo = Photo(profile=request.user)
                 photo.image.save(f.name, ContentFile(data))
                 photo.save()
-        print('='*10 + '\nInvalid\n' + '='*10)
         return redirect('profiles:photo_upload')
 
 

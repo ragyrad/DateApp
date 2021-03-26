@@ -12,7 +12,7 @@
 
 {% block content %}
     <div class="col-6">
-        <h1>About you</h1>
+        <h1 class="my-2">About you</h1>
 
     <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
@@ -29,7 +29,6 @@
                         </div>
                     {% endfor %}
                 {% endif %}
-
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -41,7 +40,14 @@
         </button>
     </div>
 
-        <h3>{{ user.first_name }}, {{ age }}</h3>
+        <div class="row my-2">
+            <div class="col-sm-8"><h3>{{ user.first_name }}, {{ age }}</h3></div>
+            <div class="col-sm-4">
+                <a href="{% url "profiles:photo_upload" %}">
+                    <button type="button" class="btn btn-outline-dark">Upload photo</button>
+                </a>
+            </div>
+        </div>
         <h5>{{ user.city }}, {{ user.country }}</h5>
         <form method="post" novalidate>
             {% csrf_token %}
