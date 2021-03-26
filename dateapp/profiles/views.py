@@ -1,15 +1,15 @@
 from datetime import date
 
-from django.core.files.base import ContentFile
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
 from django.views.generic import View
+from django.shortcuts import render, redirect
+from django.core.files.base import ContentFile
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import ProfileCreationForm, ProfileEditForm, UploadPhotoForm
 from .models import Photo
 
-class UserRegisterView(View):
 
+class UserRegisterView(View):
     def get(self, request):
         form = ProfileCreationForm()
         return render(request, 'profiles/register.html', {'form': form})
@@ -24,7 +24,7 @@ class UserRegisterView(View):
         return render(request, 'profiles/register.html', {'form': form})
 
 
-class MyProfileView(View):
+class MyProfileView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
         age = date.today().year - user.date_of_birth.year - \
@@ -42,7 +42,7 @@ class MyProfileView(View):
             return redirect('profiles:my_profile')
 
 
-class PhotoUploadView(View):
+class PhotoUploadView(LoginRequiredMixin, View):
     def get(self, request):
         photos = request.user.photos.all()
         form = UploadPhotoForm()
@@ -59,7 +59,7 @@ class PhotoUploadView(View):
         return redirect('profiles:photo_upload')
 
 
-class PhotoDeleteView(View):
+class PhotoDeleteView(LoginRequiredMixin, View):
     def get(self, request, id):
         image = Photo.objects.get(pk=id)
         image.delete()
