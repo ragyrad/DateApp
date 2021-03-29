@@ -11,6 +11,7 @@ from .models import Photo
 
 
 class UserRegisterView(View):
+    """View for user registration"""
     def get(self, request):
         form = ProfileCreationForm()
         return render(request, 'profiles/register.html', {'form': form})
@@ -26,6 +27,7 @@ class UserRegisterView(View):
 
 
 class MyProfileView(LoginRequiredMixin, View):
+    """View for user profile where he can change the description and the gender he is looking for"""
     def get(self, request):
         user = request.user
         age = date.today().year - user.date_of_birth.year - \
@@ -44,6 +46,7 @@ class MyProfileView(LoginRequiredMixin, View):
 
 
 class PhotoUploadView(LoginRequiredMixin, View):
+    """View where user can upload profile photos"""
     def get(self, request):
         photos = request.user.photos.all()
         form = UploadPhotoForm()
@@ -67,6 +70,7 @@ class PhotoUploadView(LoginRequiredMixin, View):
 
 
 class PhotoDeleteView(LoginRequiredMixin, View):
+    """View where user can delete profile photos"""
     def get(self, request, id):
         image = Photo.objects.get(pk=id)
         image.delete()

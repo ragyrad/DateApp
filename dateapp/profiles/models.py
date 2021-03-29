@@ -7,6 +7,7 @@ from django.utils.text import slugify
 
 
 class Profile(AbstractUser):
+    """User model"""
     SEX_CHOICES = (
         ('male', 'Male'),
         ('female', 'Female'),
@@ -30,6 +31,7 @@ class Profile(AbstractUser):
 
 
 class Photo(models.Model):
+    """User photo model """
     profile = models.ForeignKey(Profile, related_name='photos', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='profiles_photo')
     created = models.DateTimeField(auto_now=True)

@@ -7,6 +7,7 @@ from .models import Profile, Photo
 
 
 class ProfileCreationForm(UserCreationForm):
+    """User registration form"""
     class Meta(UserCreationForm.Meta):
         model = Profile
         fields = ('username', 'first_name', 'email', 'sex', 'sex_looking_for', 'country', 'city', 'date_of_birth')
@@ -25,18 +26,21 @@ class ProfileCreationForm(UserCreationForm):
 
 
 class ProfileChangeForm(UserChangeForm):
+    """User change data form"""
     class Meta:
         model = Profile
         fields = ('username', 'first_name', 'email', 'sex', 'sex_looking_for', 'country', 'city', 'date_of_birth')
 
 
 class ProfileEditForm(forms.ModelForm):
+    """Form so that the user can change the description and the desired gender"""
     class Meta:
         model = Profile
         fields = ('description', 'sex_looking_for',)
 
 
 class UploadPhotoForm(forms.Form):
+    """Form so that the user can upload the photo for profile"""
     photos = forms.ImageField(widget=forms.FileInput(attrs={'multiple': 'multiple'}))
 
 

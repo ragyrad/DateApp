@@ -132,6 +132,7 @@ class PhotoModelTest(TestCase):
 class ProfileCreationFormTest(TestCase):
 
     def test_profile_creation_form_date_of_birth_in_future(self):
+        """Test that the user cannot register by putting the date of birth in the future"""
         tomorrow_date = date.today() + timedelta(days=1)
         form_data = {'date_of_birth': tomorrow_date}
         form = ProfileCreationForm(data=form_data)
@@ -139,6 +140,7 @@ class ProfileCreationFormTest(TestCase):
         self.assertEquals(form.errors['date_of_birth'][0], 'Invalid date - date of birth in the future.')
 
     def test_profile_creation_form_date_of_birth_user_under_18(self):
+        """Testing that the user must be over 18 years old"""
         under_18_date = (date.today().year - 18, date.today().month, date.today().day + 1)
         form_data = {'date_of_birth': date(*under_18_date)}
         form = ProfileCreationForm(data=form_data)
@@ -146,6 +148,7 @@ class ProfileCreationFormTest(TestCase):
         self.assertEquals(form.errors['date_of_birth'][0], 'You must be over 18 years old.')
 
     def test_profile_creation_form_date_of_birth_normal(self):
+        """Valid date of birth behavior test """
         date_of_birth_adult = (date.today().year - 18, date.today().month, date.today().day)
         form_data = {'date_of_birth': date(*date_of_birth_adult)}
         form = ProfileCreationForm(data=form_data)
