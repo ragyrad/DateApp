@@ -15,6 +15,8 @@ class ProfileCreationForm(UserCreationForm):
         date_of_birth =  self.cleaned_data['date_of_birth']
         # int(True) = 1, int(False) = 0
         # so if today's month and day is less than the month and day of birth, we subtract 1 from the age
+        if date.today() < date_of_birth:
+            raise forms.ValidationError('Invalid date - date of birth in the future.')
         age = date.today().year - date_of_birth.year - \
               ((date.today().month, date.today().day) < (date_of_birth.month, date_of_birth.day))
         if age < 18:

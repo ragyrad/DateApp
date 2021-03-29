@@ -1,10 +1,12 @@
 import os
+from datetime import date, timedelta
 
 from django.test import TestCase
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from .models import Profile, Photo
+from .forms import ProfileCreationForm
 
 
 class ProfileModelTest(TestCase):
@@ -125,3 +127,26 @@ class PhotoModelTest(TestCase):
         photo = Photo.objects.get(id=1)
         field_label = photo._meta.get_field('created').verbose_name
         self.assertEquals(field_label, 'created')
+
+
+class ProfileCreationFormTest(TestCase):
+
+    def test_profile_creation_form_date_of_birth_in_future(self):
+        tomorrow_date = date.today() + timedelta(days=1)
+        form_data = {'date_of_birth': tomorrow_date}
+        form = ProfileCreationForm(data=form_data)
+        self.assertIn('date_of_birth', form.errors)
+        self.assertEquals(form.errors['date_of_birth'][0], 'Invalid date - date of birth in the future.')
+
+    def test_profile_creation_form_date_of_birth_user_under_18(self):
+        under_18_date = (date.today().year - 18, date.today().month, date.today().day + 1)
+        form_data = {'date_of_birth': date(*under_18_date)}
+        form = ProfileCreationForm(data=form_data)
+        self.assertIn('date_of_birth', form.errors)
+        self.assertEquals(form.errors['date_of_birth'][0], 'You must be over 18 years old.')
+
+    def test_profile_creation_form_date_of_birth_normal(self):
+        date_of_birth_adult = (date.today().year - 18, date.today().month, date.today().day)
+        form_data = {'date_of_birth': date(*date_of_birth_adult)}
+        form = ProfileCreationForm(data=form_data)
+        self.assertNotIn('date_of_birth', form.errors)
