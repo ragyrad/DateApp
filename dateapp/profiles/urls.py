@@ -11,5 +11,6 @@ urlpatterns = [
     path('logout/', auth_views.logout_then_login, name='logout'),
     path('upload-photo/', views.PhotoUploadView.as_view(), name='photo_upload'),
     path('delete-photo/<int:id>', views.PhotoDeleteView.as_view(), name='photo_delete'),
+    path('people/', views.ProfileListView.as_view(), name='profiles_list')
 ]
 

@@ -1,13 +1,12 @@
-from datetime import date
-
 from django.views.generic import View
 from django.shortcuts import render, redirect
 from django.core.files.base import ContentFile
+from django.views.generic.list import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from django import forms
 from .forms import ProfileCreationForm, ProfileEditForm, UploadPhotoForm
-from .models import Photo
+from .models import Profile, Photo
 
 
 class UserRegisterView(View):
@@ -30,8 +29,7 @@ class MyProfileView(LoginRequiredMixin, View):
     """View for user profile where he can change the description and the gender he is looking for"""
     def get(self, request):
         user = request.user
-        age = date.today().year - user.date_of_birth.year - \
-              ((date.today().month, date.today().day) < (user.date_of_birth.month, user.date_of_birth.day))
+        age = user.get_age()
         form = ProfileEditForm(initial={'description': user.description, 'sex_looking_for': user.sex_looking_for})
         return render(request, 'profiles/my_profile.html', {'form': form, 'user': user, 'age': age})
 
@@ -55,7 +53,7 @@ class PhotoUploadView(LoginRequiredMixin, View):
     def post(self, request):
         form = UploadPhotoForm(request.POST, request.FILES)
         user_photos = request.user.photos.all()
-        # user can have a maximum of 8 photos
+        # User can have a maximum of 8 photos
         if len(user_photos) + len(request.FILES.getlist('photos')) > 8:
             form.add_error('photos', forms.ValidationError('You can have a maximum of 8 photos.'))
 
@@ -75,3 +73,9 @@ class PhotoDeleteView(LoginRequiredMixin, View):
         image = Photo.objects.get(pk=id)
         image.delete()
         return redirect('profiles:photo_upload')
+
+
+class ProfileListView(LoginRequiredMixin, ListView):
+    queryset = Profile.objects.all()
+    paginate_by = 1
+    context_object_name = 'profiles'

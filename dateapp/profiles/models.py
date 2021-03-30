@@ -3,7 +3,6 @@ from datetime import date
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
-from django.utils.text import slugify
 
 
 class Profile(AbstractUser):
@@ -23,8 +22,14 @@ class Profile(AbstractUser):
     date_of_birth = models.DateField(default=timezone.now)
     description = models.TextField(max_length=7000)
 
+
+    def get_age(self):
+        """Function that calculate age of the user"""
+        return date.today().year - self.date_of_birth.year - \
+              ((date.today().month, date.today().day) < (self.date_of_birth.month, self.date_of_birth.day))
+
     class Meta:
-        ordering = ('first_name',)
+        ordering = ('-first_name',)
 
     def __str__(self):
         return self.first_name
