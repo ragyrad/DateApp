@@ -13,15 +13,21 @@ class Profile(AbstractUser):
         ('no_matter', 'No matter'),
     )
 
+    PLACE_CHOICES = (
+        ('city', 'My city'),
+        ('country', 'My country'),
+        ('word', 'All word')
+    )
+
     first_name = models.CharField(max_length=50)
     sex = models.CharField(max_length=10, choices=SEX_CHOICES, default='male')
     sex_looking_for = models.CharField(max_length=10, choices=SEX_CHOICES, default='female')
     email = models.EmailField(unique=True)
     country = models.CharField(max_length=30)
     city = models.CharField(max_length=30)
+    place_looking_for = models.CharField(max_length=10, choices=PLACE_CHOICES, default='city')
     date_of_birth = models.DateField(default=timezone.now)
-    description = models.TextField(max_length=7000)
-
+    description = models.TextField(max_length=7000, blank=True)
 
     def get_age(self):
         """Function that calculate age of the user"""

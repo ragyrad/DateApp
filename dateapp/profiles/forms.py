@@ -33,10 +33,10 @@ class ProfileChangeForm(UserChangeForm):
 
 
 class ProfileEditForm(forms.ModelForm):
-    """Form so that the user can change the description and the desired gender"""
+    """A form so that the user can change the description, search gender, and location"""
     class Meta:
         model = Profile
-        fields = ('description', 'sex_looking_for',)
+        fields = ('description', 'sex_looking_for', 'place_looking_for')
 
 
 class UploadPhotoForm(forms.Form):

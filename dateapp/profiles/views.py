@@ -26,7 +26,7 @@ class UserRegisterView(View):
 
 
 class MyProfileView(LoginRequiredMixin, View):
-    """View for user profile where he can change the description and the gender he is looking for"""
+    """View for user profile where he can change the description, the gender he is looking for and the location"""
     def get(self, request):
         user = request.user
         age = user.get_age()
@@ -39,6 +39,7 @@ class MyProfileView(LoginRequiredMixin, View):
             temp_user = form.save(commit=False)
             request.user.description = temp_user.description
             request.user.sex_looking_for = temp_user.sex_looking_for
+            request.user.place_looking_for = temp_user.place_looking_for
             request.user.save()
             return redirect('profiles:my_profile')
 
@@ -81,8 +82,18 @@ class ProfileListView(LoginRequiredMixin, ListView):
     context_object_name = 'profiles'
 
     def get_queryset(self):
-        sex_filter = self.request.user.sex_looking_for
-        queryset = Profile.objects.all().exclude(id=self.request.user.id)
+        user = self.request.user
+        queryset = Profile.objects.all().exclude(id=user.id)
+
+        # filter by gender
+        sex_filter = user.sex_looking_for
         if sex_filter != 'no_matter':
             queryset = queryset.filter(sex=sex_filter)
+
+        # filter by place
+        place_filter = user.place_looking_for
+        if place_filter != 'word':
+            queryset = queryset.filter(country=user.country)
+            if place_filter == 'city':
+                queryset = queryset.filter(city=user.city)
         return queryset
