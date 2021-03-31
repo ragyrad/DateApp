@@ -54,6 +54,7 @@
             {{ form|crispy }}
             <button type="submit" class="btn btn-success my-2">Save</button>
         </form>
+        <a href="{% url 'profiles:password_change' %}" class="link-secondary">Change password</a>
     </div>
 {% endblock content %}
 

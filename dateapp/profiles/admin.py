@@ -10,7 +10,7 @@ class ProfileAdmin(UserAdmin):
     add_form = ProfileCreationForm
     form = ProfileChangeForm
     ordering = ('first_name',)
-    list_display = ['first_name', 'email', 'sex', 'country', 'city', 'date_of_birth']
+    list_display = ['username', 'first_name', 'email', 'sex', 'country', 'city', 'date_of_birth']
 
     add_fieldsets = (
         (None, {
