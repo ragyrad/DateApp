@@ -76,6 +76,13 @@ class PhotoDeleteView(LoginRequiredMixin, View):
 
 
 class ProfileListView(LoginRequiredMixin, ListView):
-    queryset = Profile.objects.all()
+    model = Profile
     paginate_by = 1
     context_object_name = 'profiles'
+
+    def get_queryset(self):
+        sex_filter = self.request.user.sex_looking_for
+        queryset = Profile.objects.all().exclude(id=self.request.user.id)
+        if sex_filter != 'no_matter':
+            queryset = queryset.filter(sex=sex_filter)
+        return queryset
