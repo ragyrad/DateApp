@@ -11,7 +11,6 @@
 {% block content %}
     <div class="col-6 my-5">
         {% for profile in profiles %}
-
             <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     {% if not profile.photos.all %}
@@ -42,24 +41,11 @@
             <h2>{{ profile.country }}, {{ profile.city }}</h2>
             <h3>Description:</h3>
             <p>{{ profile.description }}</p>
+            <a href="{% url 'profiles:like' user_id=profile.id %}" class="btn btn-success btn-lg">LIKE</a>
+            <a href="{% url 'profiles:skip' user_id=profile.id %}" class="btn btn-secondary btn-lg">SKIP</a>
+
         {% empty %}
             <h1>No people yet</h1>
         {% endfor %}
-
-        {% if is_paginated %}
-            <div class="pagination">
-                <span class="page-links">
-                    {% if page_obj.has_previous %}
-                        <a href="/people?page={{ page_obj.previous_page_number }}">previous</a>
-                    {% endif %}
-                    <span class="page-current">
-                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-                    </span>
-                    {% if page_obj.has_next %}
-                        <a href="/people?page={{ page_obj.next_page_number }}">next</a>
-                    {% endif %}
-                </span>
-            </div>
-        {% endif %}
     </div>
 {% endblock content %}

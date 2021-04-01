@@ -33,6 +33,8 @@ urlpatterns = [
 
     path('upload_photo/', views.PhotoUploadView.as_view(), name='photo_upload'),
     path('delete_photo/<int:id>', views.PhotoDeleteView.as_view(), name='photo_delete'),
-    path('people/', views.ProfileListView.as_view(), name='profiles_list')
+    path('people/', views.ProfileListView.as_view(), name='profiles_list'),
+    path('like/<int:user_id>', views.LikeView.as_view(), name='like'),
+    path('skip/<int:user_id>', views.LikeView.as_view(), name='skip'),
 ]
 

@@ -28,6 +28,7 @@ class Profile(AbstractUser):
     place_looking_for = models.CharField(max_length=10, choices=PLACE_CHOICES, default='city')
     date_of_birth = models.DateField(default=timezone.now)
     description = models.TextField(max_length=7000, blank=True)
+    relationships = models.ManyToManyField('self' , through='Relationship', symmetrical=False)
 
     def get_age(self):
         """Function that calculate age of the user"""
@@ -49,3 +50,11 @@ class Photo(models.Model):
 
     class Meta:
         ordering = ['created']
+
+
+class Relationship(models.Model):
+    user = models.ForeignKey(Profile, related_name='user', on_delete=models.CASCADE)
+    target = models.ForeignKey(Profile, related_name='target_user', on_delete=models.CASCADE)
+    like = models.BooleanField(default=False)
+    match = models.BooleanField(default=False)
+    match_date = models.DateTimeField(blank=True, null=True)

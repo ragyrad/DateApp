@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.views.generic import View
 from django.shortcuts import render, redirect
 from django.core.files.base import ContentFile
@@ -6,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from django import forms
 from .forms import ProfileCreationForm, ProfileEditForm, UploadPhotoForm
-from .models import Profile, Photo
+from .models import Profile, Photo, Relationship
 
 
 class UserRegisterView(View):
@@ -83,7 +84,8 @@ class ProfileListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         user = self.request.user
-        queryset = Profile.objects.all().exclude(id=user.id)
+        user_rlts = [target.target.username for target in Relationship.objects.filter(user=user)]
+        queryset = Profile.objects.all().exclude(id=user.id).exclude(username__in=user_rlts)
 
         # filter by gender
         sex_filter = user.sex_looking_for
@@ -97,3 +99,28 @@ class ProfileListView(LoginRequiredMixin, ListView):
             if place_filter == 'city':
                 queryset = queryset.filter(city=user.city)
         return queryset
+
+
+class LikeView(LoginRequiredMixin, View):
+    def get(self, request, user_id):
+        target_user = Profile.objects.get(pk=user_id)
+        # Like the user
+        request.user.relationships.add(target_user, through_defaults={'like': True})
+        # If the like is mutual, then we make a match
+        if Relationship.objects.filter(user=target_user, target=request.user, like=True):
+            user_rlts = Relationship.objects.filter(user=request.user, target=target_user).first()
+            target_rlst = Relationship.objects.filter(user=target_user, target=request.user).first()
+            user_rlts.match = True
+            user_rlts.match_date=timezone.now()
+            target_rlst.match = True
+            target_rlst.match_date=timezone.now()
+            user_rlts.save()
+            target_rlst.save()
+        return redirect('profiles:profiles_list')
+
+
+class SkipView(LoginRequiredMixin, View):
+    def get(self, request, user_id):
+        target_user = Profile.objects.get(pk=user_id)
+        request.user.relationships.add(target_user)
+        return redirect('profiles:profile_list')

@@ -1,8 +1,13 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import Profile, Photo
+from .models import Profile, Photo, Relationship
 from .forms import ProfileCreationForm, ProfileChangeForm
+
+
+class RelationshipsInline(admin.TabularInline):
+    model = Relationship
+    fk_name = 'user'
 
 
 class ProfileAdmin(UserAdmin):
@@ -11,6 +16,7 @@ class ProfileAdmin(UserAdmin):
     form = ProfileChangeForm
     ordering = ('first_name',)
     list_display = ['username', 'first_name', 'email', 'sex', 'country', 'city', 'date_of_birth']
+    inlines = [RelationshipsInline,]
 
     add_fieldsets = (
         (None, {
