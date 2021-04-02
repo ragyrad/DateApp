@@ -123,4 +123,4 @@ class SkipView(LoginRequiredMixin, View):
     def get(self, request, user_id):
         target_user = Profile.objects.get(pk=user_id)
         request.user.relationships.add(target_user)
-        return redirect('profiles:profile_list')
+        return redirect('profiles:profiles_list')
