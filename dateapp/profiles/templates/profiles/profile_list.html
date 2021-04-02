@@ -1,8 +1,5 @@
 {% extends "base.html" %}
 
-{% load static %}
-{% load thumbnail %}
-
 {% block title %}
 	People
 {% endblock title %}
@@ -11,36 +8,7 @@
 {% block content %}
     <div class="col-6 my-5">
         {% for profile in profiles %}
-            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-inner">
-                    {% if not profile.photos.all %}
-                        <div class="carousel-item active">
-                            <img src="{% static 'img/default-user-avatar.png' %}" class="d-block w-100">
-                        </div>
-                    {% else %}
-                        {% for photo in profile.photos.all %}
-                            <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                                <a href="{{ photo.image.url }}">
-                                    <img src="{% thumbnail photo.image 650x650 crop="smart" %}" class="d-block">
-                                </a>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
-            </div>
-
-            <h2>{{ profile.first_name }}, {{ profile.get_age }}</h2>
-            <h2>{{ profile.country }}, {{ profile.city }}</h2>
-            <h3>Description:</h3>
-            <p>{{ profile.description }}</p>
+            {% include "profiles/user_info.html" with profile=profile %}
             <a href="{% url 'profiles:like' user_id=profile.id %}" class="btn btn-success btn-lg">LIKE</a>
             <a href="{% url 'profiles:skip' user_id=profile.id %}" class="btn btn-secondary btn-lg">SKIP</a>
 

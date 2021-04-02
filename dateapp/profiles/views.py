@@ -124,3 +124,15 @@ class SkipView(LoginRequiredMixin, View):
         target_user = Profile.objects.get(pk=user_id)
         request.user.relationships.add(target_user)
         return redirect('profiles:profiles_list')
+
+
+class MatchListView(LoginRequiredMixin, ListView):
+    model = Relationship
+    paginate_by = 15
+    context_object_name = 'matches'
+    template_name = 'profiles/match_list.html'
+
+    def get_queryset(self):
+        user = self.request.user
+        user_matches = Relationship.objects.filter(user=user, match=True)
+        return user_matches

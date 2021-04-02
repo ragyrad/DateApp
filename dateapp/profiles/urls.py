@@ -36,5 +36,6 @@ urlpatterns = [
     path('people/', views.ProfileListView.as_view(), name='profiles_list'),
     path('like/<int:user_id>', views.LikeView.as_view(), name='like'),
     path('skip/<int:user_id>', views.SkipView.as_view(), name='skip'),
+    path('matches/', views.MatchListView.as_view(), name='matches'),
 ]
 
