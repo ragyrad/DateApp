@@ -15,7 +15,7 @@ class ProfileAdmin(UserAdmin):
     add_form = ProfileCreationForm
     form = ProfileChangeForm
     ordering = ('first_name',)
-    list_display = ['username', 'first_name', 'email', 'sex', 'country', 'city', 'date_of_birth']
+    list_display = ['username', 'slug', 'first_name', 'email', 'sex', 'country', 'city', 'date_of_birth']
     inlines = [RelationshipsInline,]
 
     add_fieldsets = (

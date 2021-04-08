@@ -3,6 +3,7 @@ from django.views.generic import View
 from django.shortcuts import render, redirect
 from django.core.files.base import ContentFile
 from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from django import forms
@@ -77,6 +78,10 @@ class PhotoDeleteView(LoginRequiredMixin, View):
         return redirect('profiles:photo_upload')
 
 
+class ProfileDetailView(LoginRequiredMixin, DetailView):
+    model = Profile
+
+
 class ProfileListView(LoginRequiredMixin, ListView):
     model = Profile
     paginate_by = 1
@@ -102,8 +107,8 @@ class ProfileListView(LoginRequiredMixin, ListView):
 
 
 class LikeView(LoginRequiredMixin, View):
-    def get(self, request, user_id):
-        target_user = Profile.objects.get(pk=user_id)
+    def get(self, request, slug):
+        target_user = Profile.objects.get(slug=slug)
         # Like the user
         request.user.relationships.add(target_user, through_defaults={'like': True})
         # If the like is mutual, then we make a match
@@ -120,8 +125,8 @@ class LikeView(LoginRequiredMixin, View):
 
 
 class SkipView(LoginRequiredMixin, View):
-    def get(self, request, user_id):
-        target_user = Profile.objects.get(pk=user_id)
+    def get(self, request, slug):
+        target_user = Profile.objects.get(slug=slug)
         request.user.relationships.add(target_user)
         return redirect('profiles:profiles_list')
 

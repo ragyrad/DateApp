@@ -9,8 +9,8 @@
     <div class="col-6 my-5">
         {% for profile in profiles %}
             {% include "profiles/user_info.html" with profile=profile %}
-            <a href="{% url 'profiles:like' user_id=profile.id %}" class="btn btn-success btn-lg">LIKE</a>
-            <a href="{% url 'profiles:skip' user_id=profile.id %}" class="btn btn-secondary btn-lg">SKIP</a>
+            <a href="{% url 'profiles:like' slug=profile.slug %}" class="btn btn-success btn-lg">LIKE</a>
+            <a href="{% url 'profiles:skip' slug=profile.slug %}" class="btn btn-secondary btn-lg">SKIP</a>
 
         {% empty %}
             <h1>No people yet</h1>

@@ -34,8 +34,9 @@ urlpatterns = [
     path('upload_photo/', views.PhotoUploadView.as_view(), name='photo_upload'),
     path('delete_photo/<int:id>', views.PhotoDeleteView.as_view(), name='photo_delete'),
     path('people/', views.ProfileListView.as_view(), name='profiles_list'),
-    path('like/<int:user_id>', views.LikeView.as_view(), name='like'),
-    path('skip/<int:user_id>', views.SkipView.as_view(), name='skip'),
+    path('people/<slug:slug>', views.ProfileDetailView.as_view(), name='profile_detail'),
+    path('like/<slug:slug>', views.LikeView.as_view(), name='like'),
+    path('skip/<slug:slug>', views.SkipView.as_view(), name='skip'),
     path('matches/', views.MatchListView.as_view(), name='matches'),
 ]
 

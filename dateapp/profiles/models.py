@@ -1,8 +1,16 @@
+import string
+import random
 from datetime import date
+
 
 from django.db import models
 from django.utils import timezone
+from django.utils.text import slugify
 from django.contrib.auth.models import AbstractUser
+
+
+def rand_slug():
+    return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(6))
 
 
 class Profile(AbstractUser):
@@ -20,6 +28,8 @@ class Profile(AbstractUser):
     )
 
     first_name = models.CharField(max_length=50)
+
+    slug = models.SlugField(max_length=100, unique=True)
     sex = models.CharField(max_length=10, choices=SEX_CHOICES, default='male')
     sex_looking_for = models.CharField(max_length=10, choices=SEX_CHOICES, default='female')
     email = models.EmailField(unique=True)
@@ -40,6 +50,11 @@ class Profile(AbstractUser):
 
     def __str__(self):
         return self.first_name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(rand_slug() + '_' + str(self.first_name))
+        super(Profile, self).save(*args, **kwargs)
 
 
 class Photo(models.Model):

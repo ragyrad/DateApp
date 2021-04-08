@@ -13,12 +13,14 @@
                 {% with match.target as profile %}
                     <div class="row my-3">
                         <div class="p-0 col-sm-auto ">
-                            <a href="#" class="avatar avatar-lg rounded-circle">
+                            <a href="{% url "profiles:profile_detail" profile.slug %}" class="avatar avatar-lg rounded-circle">
                                 <img class="rounded-circle" src="{% thumbnail profile.photos.first.image 70x70 crop="smart" %}"/>
                             </a>
                         </div>
                         <div class="col-sm-7 my-3">
-                            <h2>{{ profile.first_name }}</h2>
+                            <a href="{% url "profiles:profile_detail" profile.slug %}" class="link-dark">
+                                <h2>{{ profile.first_name }}</h2>
+                            </a>
                         </div>
                         <div class="col-sm-3 my-3">
                             <p class="m-0">{{ match.match_date|date }}</p>
