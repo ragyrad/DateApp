@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load thumbnail %}
+{% load thumbnail static %}
 
 {% block title %}
 	People
@@ -13,8 +13,12 @@
                 {% with match.target as profile %}
                     <div class="row my-3">
                         <div class="p-0 col-sm-auto ">
-                            <a href="{% url "profiles:profile_detail" profile.slug %}" class="avatar avatar-lg rounded-circle">
-                                <img class="rounded-circle" src="{% thumbnail profile.photos.first.image 70x70 crop="smart" %}"/>
+                            <a href="{% url "profiles:profile_detail" profile.slug %}">
+                                {% if profile.photos.all %}
+                                    <img class="rounded-circle" src="{% thumbnail profile.photos.first.image 70x70 crop="smart" %}"/>
+                                {% else %}
+                                    <img class="rounded-circle" src="{% static 'img/default-user-avatar.png' %}" width="70" height="70" />
+                                {% endif %}
                             </a>
                         </div>
                         <div class="col-sm-7 my-3">
