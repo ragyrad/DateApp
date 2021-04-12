@@ -1,3 +1,6 @@
+from datetime import timedelta
+
+from django import forms
 from django.utils import timezone
 from django.views.generic import View
 from django.shortcuts import render, redirect
@@ -6,7 +9,7 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from django import forms
+from .tasks import reset_like
 from .forms import ProfileCreationForm, ProfileEditForm, UploadPhotoForm
 from .models import Profile, Photo, Relationship
 
@@ -121,6 +124,10 @@ class LikeView(LoginRequiredMixin, View):
             target_rlst.match_date=timezone.now()
             user_rlts.save()
             target_rlst.save()
+
+        week_after = timezone.now() + timedelta(weeks=1)
+        reset_like.apply_async((request.user.id, target_user.id), eta=week_after)
+
         return redirect('profiles:profiles_list')
 
 
