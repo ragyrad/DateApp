@@ -21,7 +21,7 @@
                                 {% endif %}
                             </a>
                         </div>
-                        <div class="col-sm-7 my-3">
+                        <div class="col-sm-6 my-3">
                             <a href="{% url "profiles:profile_detail" profile.slug %}" class="link-dark">
                                 <h2>{{ profile.first_name }}</h2>
                             </a>
@@ -29,6 +29,11 @@
                         <div class="col-sm-3 my-3">
                             <p class="m-0">{{ match.match_date|date }}</p>
                             <p>{{ match.match_date|time }}</p>
+                        </div>
+                        <div class="col-sm-1 my-3">
+                            <a href="{% url "profiles:delete_match" profile.slug %}">
+                                <button type="button" class="btn-close" aria-label="Close"></button>
+                            </a>
                         </div>
                         <hr>
                     </div>

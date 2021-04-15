@@ -148,3 +148,14 @@ class MatchListView(LoginRequiredMixin, ListView):
         user = self.request.user
         user_matches = Relationship.objects.filter(user=user, match=True)
         return user_matches
+
+
+class MatchDeleteView(LoginRequiredMixin, View):
+    """View delete match for both users"""
+    def get(self, request, slug):
+        user = request.user
+        target = Profile.objects.get(slug=slug)
+        rels = Relationship.objects.filter(user__in=[user.id, target.id], target__in=[user.id, target.id], match=True)
+        for rel in rels:
+            rel.delete()
+        return redirect('profiles:matches')

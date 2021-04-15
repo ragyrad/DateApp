@@ -38,5 +38,6 @@ urlpatterns = [
     path('like/<slug:slug>', views.LikeView.as_view(), name='like'),
     path('skip/<slug:slug>', views.SkipView.as_view(), name='skip'),
     path('matches/', views.MatchListView.as_view(), name='matches'),
+    path('matches/delete/<slug:slug>', views.MatchDeleteView.as_view(), name='delete_match'),
 ]
 
