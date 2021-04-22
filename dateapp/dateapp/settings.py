@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'easy_thumbnails',
+    'cities_light',
+    'smart_selects',
 ]
 
 
@@ -140,3 +142,5 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+CITIES_LIGHT_APP_NAME = 'profiles'

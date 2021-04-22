@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load crispy_forms_tags %}
+{% load static crispy_forms_tags %}
 
 {% block title %}
 	Registration
@@ -16,5 +16,9 @@
         <button type="submit" class="btn btn-success">Register</button>
         </form>
     </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="{% static 'smart-selects/admin/js/bindfields.js' %}"></script>
+    <script src="{% static 'smart-selects/admin/js/chainedfk.js' %}"></script>
 {% endblock content %}
 	

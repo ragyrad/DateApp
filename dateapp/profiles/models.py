@@ -2,15 +2,40 @@ import string
 import random
 from datetime import date
 
-
 from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 from django.contrib.auth.models import AbstractUser
 
+from cities_light.receivers import connect_default_signals
+from cities_light.models import AbstractCountry, AbstractRegion, AbstractSubRegion, AbstractCity
+
+from smart_selects.db_fields import ChainedForeignKey
+
 
 def rand_slug():
     return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(6))
+
+
+class Country(AbstractCountry):
+    pass
+connect_default_signals(Country)
+
+
+class Region(AbstractRegion):
+    pass
+connect_default_signals(Region)
+
+
+class SubRegion(AbstractSubRegion):
+    pass
+connect_default_signals(SubRegion)
+
+
+class City(AbstractCity):
+    def __str__(self):
+        return f'{self.name}'
+connect_default_signals(City)
 
 
 class Profile(AbstractUser):
@@ -33,8 +58,14 @@ class Profile(AbstractUser):
     sex = models.CharField(max_length=10, choices=SEX_CHOICES, default='male')
     sex_looking_for = models.CharField(max_length=10, choices=SEX_CHOICES, default='female')
     email = models.EmailField(unique=True)
-    country = models.CharField(max_length=30)
-    city = models.CharField(max_length=30)
+    country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True)
+    city = ChainedForeignKey(
+        City,
+        chained_field='country',
+        chained_model_field='country',
+        show_all=False,
+        null=True,
+    )
     place_looking_for = models.CharField(max_length=10, choices=PLACE_CHOICES, default='city')
     date_of_birth = models.DateField(default=timezone.now)
     description = models.TextField(max_length=7000, blank=True)
