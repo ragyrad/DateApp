@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'easy_thumbnails',
     'cities_light',
     'smart_selects',
+    'channels',
 ]
 
 
@@ -74,6 +75,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'dateapp.wsgi.application'
+ASGI_APPLICATION = 'dateapp.asgi.application'
 
 CELERY_BROKER_URL = 'redis://localhost:6379'
 
