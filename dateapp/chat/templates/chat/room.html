@@ -49,18 +49,6 @@
 	            </div>
 	            <div class="chat-history">
 	                <ul id="chat-log" class="m-b-0">
-	                    <li class="clearfix">
-	                        <div class="message-data text-end">
-	                            <span class="message-data-time">10:10 AM, Today</span>
-	                        </div>
-	                        <div class="message my-message float-right"> Hi Aiden, how are you? How is the project coming along? </div>
-	                    </li>
-	                    <li class="clearfix">
-	                        <div class="message-data">
-	                            <span class="message-data-time">10:12 AM, Today</span>
-	                        </div>
-	                        <div class="message other-message">Are we meeting today?</div>
-	                    </li>
 	                </ul>
 	            </div>
 	            <div class="chat-message clearfix">
@@ -139,9 +127,42 @@
 			chatSocket.send(JSON.stringify({'command': 'fetch_messages'}))	
 		}
 
+		function diffDates(day_one, day_two) {
+		    return (day_one - day_two) / (60 * 60 * 24 * 1000);
+		};
+
+		function getTime(timestamp) {
+			var timestamp = new Date(timestamp);
+			var today = new Date();
+			var month_names_short = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+			const zeroPad = (num, places) => String(num).padStart(places, '0')
+
+			var timestamp_year = timestamp.getFullYear();
+			var timestamp_month = zeroPad(timestamp.getMonth()+1, 2);
+			var timestamp_day = zeroPad(timestamp.getDate(), 2);
+			var timestamp_hours = zeroPad(timestamp.getHours(), 2);
+			var timestamp_minutes = zeroPad(timestamp.getMinutes(), 2);
+
+			var today_year = today.getFullYear();
+			var today_month = today.getMonth()+1;
+			var today_day = today.getDate();
+
+			if (timestamp_year != today_year) {
+			// if the timestamp is not this year then show HH:MM YYYY-MM-DD
+				return `${timestamp_hours}:${timestamp_minutes}\n${timestamp_year}-${timestamp_month}-${timestamp_day}`
+			} else if (timestamp_month != today_month || timestamp_day != today_day){
+			// if the timestamp is not this day show HH:MM Month and day number
+				return `${timestamp_hours}:${timestamp_minutes}\n${month_names_short[today_month-1]} ${timestamp_day}`
+			} else {
+			// if the timestamp is today show HH:MM
+				return `${timestamp_hours}:${timestamp_minutes}`
+			}
+		}
+
 		function createMessage(data) {
 			var author = data['author'];
-			var timestamp = data['timestamp']; 
+			var timeToShow = getTime(data['timestamp']);
 
 			// list tag for message 
 			var msgListTag = document.createElement('li');
@@ -155,7 +176,9 @@
 			// span tag which contains message date and time
 			var msgDataSpanTag = document.createElement('span');
 			msgDataSpanTag.className = 'message-data-time';
-			msgDataSpanTag.textContent = timestamp;
+			smallTag = document.createElement('small');
+			smallTag.textContent = timeToShow;
+			msgDataSpanTag.appendChild(smallTag);
 			// append span tag to the div tag
 			msgDataDivTag.appendChild(msgDataSpanTag);
 
