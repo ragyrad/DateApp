@@ -13,3 +13,15 @@ class Message(models.Model):
 
     class Meta:
         ordering = ['timestamp']
+
+
+class Chat(models.Model):
+    participants = models.ManyToManyField(Profile, related_name='chats')
+    messages = models.ManyToManyField(Message, blank=True)
+
+    def get_dialog_participant(self, username):
+        """
+        A method that returns the user with whom the person is communicating.
+        Works for private messages between two people.
+        """
+        return self.participants.exclude(username=username).first()

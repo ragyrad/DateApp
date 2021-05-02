@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
-{% load static %}
+{% load chat_tags %}
+{% load static thumbnail %}
 
 {% block title %}
 	Chat room
@@ -31,6 +32,17 @@
 	                        <div class="status"> <i class="fa fa-circle online"></i> online </div>
 	                    </div>
 	                </li>
+	                {% for user_chat in chats %}
+	                	<li class="clearfix active">
+	                    <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
+	                    <div class="about">
+	                    	{% with other_user=user_chat|get_participant:username %}
+	                    	    <div class="name">{{ other_user }}</div>
+	                        	<div class="status"> <i class="fa fa-circle online"></i> online </div>
+	                    	{% endwith %}
+	                    </div>
+	                	</li>
+	                {% endfor %}
 	            </ul>
 	        </div>
 	        <div class="chat">
@@ -38,10 +50,14 @@
 	                <div class="row">
 	                    <div class="col-lg-6">
 	                        <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info">
-	                            <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
+	                            {% if participant.photos.all %}
+	                            	<img class="rounded-circle" src="{% thumbnail participant.photos.first.image 70x70 crop="smart" %}"/>
+	                            {% else %}
+	                            	<img src="{% static "img/default-user-avatar.png" %}">
+	                            {% endif %}
 	                        </a>
 	                        <div class="chat-about">
-	                            <h6 class="m-b-0">Aiden Chavez</h6>
+	                            <h6 class="m-b-0">{{ participant.first_name }}</h6>
 	                            <small>Last seen: 2 hours ago</small>
 	                        </div>
 	                    </div>
@@ -67,7 +83,7 @@
 	        </div>
 	    </div>
 	</div>
-	{{ room_name|json_script:"room-name" }}
+	{{ chat_id|json_script:"chat-id" }}
 {% endblock content %}
 
 {% block domready %}
@@ -79,11 +95,11 @@
 		document.getElementsByClassName('col-lg-12')[0].style.height = '100%';
 	</script>
 	<script>
-		const roomName = JSON.parse(document.getElementById('room-name').textContent);
+		const chatId = JSON.parse(document.getElementById('chat-id').textContent);
 		var username = '{{ username }}';
 
 		const chatSocket = new ReconnectingWebSocket(
-			"ws://" + window.location.host + "/ws/chat/" + roomName + "/"
+			"ws://" + window.location.host + "/ws/chat/" + chatId + "/"
 		);
 
 		chatSocket.onopen = function(e) {
