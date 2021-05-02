@@ -1,9 +1,12 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
 <head>
 	<title>{% block title %}DateApp{% endblock title %}</title>
 	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
-
+  	<link rel="stylesheet" type="text/css" href="{% static 'css/chat_room.css' %}">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
 </head>
 <body>
 <header>
@@ -22,10 +25,10 @@
           <a class="nav-link active" href="{% url 'profiles:matches' %}">Matches</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" href="#">Messages</a>
+          <a class="nav-link active" href="{% url 'chat:index' %}">Messages</a>
         </li>
       </ul>
-      <h3><span class="badge badge-dark">0 people likes you</span></h3>
+      
       <a href="{% url 'profiles:logout' %}" class="btn btn-light">Exit</a>
     </div>
   </div>
