@@ -1,24 +1,19 @@
+from django.urls import reverse
 from django.shortcuts import render
-from django.views import View
+from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Chat
-
-
-class IndexView(LoginRequiredMixin, View):
-    def get(self, request):
-        return render(request, 'chat/index.html')
-
-
-class RoomView(LoginRequiredMixin, View):
-    def get(self, request, room_name):
-        return render(request, 'chat/room.html', {'room_name': room_name, 'username': request.user.username})
+from django.views import View
 
 
 class DialogView(LoginRequiredMixin, View):
     def get(self, request, chat_id):
         user = request.user
-        chat = Chat.objects.get(id=chat_id, participants__in=[user])
+        try:
+            chat = Chat.objects.get(id=chat_id, participants__in=[user])
+        except Chat.DoesNotExist:
+            chat = None
         if chat:
             # if request user in chat
             chats = Chat.objects.filter(participants__in=[user])
@@ -31,5 +26,5 @@ class DialogView(LoginRequiredMixin, View):
                 'chats': chats,
             })
         else:
-            # FIXME: redirect to last dialog for user
-            pass
+            # redirect to the first chat for this user
+            return HttpResponseRedirect(reverse('chat:dialog', args=(request.user.chats.first().id,)))

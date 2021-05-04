@@ -12,6 +12,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .tasks import reset_like
 from .forms import ProfileCreationForm, ProfileEditForm, UploadPhotoForm
 from .models import Profile, Photo, Relationship
+from chat.models import Chat
 
 
 class UserRegisterView(View):
@@ -124,6 +125,12 @@ class LikeView(LoginRequiredMixin, View):
             target_rlst.match_date=timezone.now()
             user_rlts.save()
             target_rlst.save()
+            # and making chat between these users
+            chat = Chat.objects.create()
+            chat.participants.add(request.user)
+            chat.participants.add(target_user)
+            chat.save()
+
 
         week_after = timezone.now() + timedelta(weeks=1)
         reset_like.apply_async((request.user.id, target_user.id), eta=week_after)
@@ -158,4 +165,9 @@ class MatchDeleteView(LoginRequiredMixin, View):
         rels = Relationship.objects.filter(user__in=[user.id, target.id], target__in=[user.id, target.id], match=True)
         for rel in rels:
             rel.delete()
+        # and delete chat between these users
+        chat = Chat.objects.filter(participants__in=[user]).filter(participants__in=[target]).first()
+        for message in chat.messages.all():
+            message.delete()
+        chat.delete()
         return redirect('profiles:matches')
