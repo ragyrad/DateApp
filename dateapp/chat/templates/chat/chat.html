@@ -28,8 +28,12 @@
                             	<img src="{% static "img/default-user-avatar.png" %}">
                             {% endif %}
 		                    <div class="about">
-	                    	    	<div class="name">{{ other_user }}</div>                    			
-	                        		<div class="status"> <i class="fa fa-circle online"></i> online </div>
+	                    	    	<div class="name">{{ other_user }}</div>
+                                    {% if other_user.online %}
+                                        <div class="status"> <i class="fa fa-circle online"></i> online </div>
+                                    {% else %}
+                                        <div class="status"> <i class="fa fa-circle offline"></i> offline </div>
+                                    {% endif %}
 		                    </div>
 		                	</li>
 	                    </a>
@@ -50,7 +54,14 @@
 	                        </a>
 	                        <div class="chat-about">
 	                            <h6 class="m-b-0">{{ participant.first_name }}</h6>
-	                            <small>Last seen: 2 hours ago</small>
+                                <small>
+                                    {% if participant.online %}
+                                        Online
+                                    {% else %}
+                                        Last seen: {% if participant.last_seen %}{{ participant.last_seen|timesince }}{% else %}awile{% endif %}
+                                    {% endif %}
+                                </small>                                   
+                                <h3>{{ participant.lastseen }}</h3>
 	                        </div>
 	                    </div>
 	                </div>

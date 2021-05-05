@@ -1,9 +1,10 @@
 import string
 import random
-from datetime import date
+from datetime import date, datetime, timedelta
 
 from django.db import models
 from django.utils import timezone
+from django.core.cache import cache
 from django.utils.text import slugify
 from django.contrib.auth.models import AbstractUser
 
@@ -12,6 +13,7 @@ from cities_light.models import AbstractCountry, AbstractRegion, AbstractSubRegi
 
 from smart_selects.db_fields import ChainedForeignKey
 
+from dateapp import settings
 
 def rand_slug():
     return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(6))
@@ -75,6 +77,17 @@ class Profile(AbstractUser):
         """Function that calculate age of the user"""
         return date.today().year - self.date_of_birth.year - \
               ((date.today().month, date.today().day) < (self.date_of_birth.month, self.date_of_birth.day))
+
+    def last_seen(self):
+        return cache.get(f'seen_{self.username}')
+
+    def online(self):
+        if self.last_seen():
+            now = datetime.now()
+            if now > self.last_seen() + timedelta(seconds=settings.USER_ONLINE_TIMEOUT):
+                return False
+            return True
+        return False
 
     class Meta:
         ordering = ('-first_name',)

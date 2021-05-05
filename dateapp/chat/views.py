@@ -18,7 +18,7 @@ class DialogView(LoginRequiredMixin, View):
             # if request user in chat
             chats = Chat.objects.filter(participants__in=[user])
             participant = chat.get_dialog_participant(user.username)
-            return render(request, 'chat/room.html', {
+            return render(request, 'chat/chat.html', {
                 'username': user.username,
                 'participant': participant,
                 'chat': chat,
