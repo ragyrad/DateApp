@@ -1,4 +1,5 @@
 from django.urls import reverse
+from django.db.models import Max
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -16,7 +17,8 @@ class DialogView(LoginRequiredMixin, View):
             chat = None
         if chat:
             # if request user in chat
-            chats = Chat.objects.filter(participants__in=[user])
+            chats = Chat.objects.filter(participants__in=[user])\
+                .annotate(last_timestamp=Max('messages__timestamp')).order_by('-last_timestamp')
             participant = chat.get_dialog_participant(user.username)
             return render(request, 'chat/chat.html', {
                 'username': user.username,

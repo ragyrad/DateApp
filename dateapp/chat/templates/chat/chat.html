@@ -21,7 +21,7 @@
 	                {% for user_chat in chats %}
 						{% with other_user=user_chat|get_participant:username %}
 	                    <a href="{% url 'chat:dialog' user_chat.id %}">
-		                	<li class="clearfix {% if chat_id == user_chat.id %}active{% endif %}">
+		                	<li class="clearfix {% if chat_id == user_chat.id %}active{% endif %}" data-chatId="{{ user_chat.id }}">
 		                    {% if other_user.photos.all %}
                             	<img class="rounded-circle" src="{% thumbnail other_user.photos.first.image 70x70 crop="smart" %}"/>
                             {% else %}
@@ -53,7 +53,7 @@
 	                            {% endif %}
 	                        </a>
 	                        <div class="chat-about">
-	                            <h6 class="m-b-0">{{ participant.first_name }}</h6>
+	                            <h6 id="participant" class="m-b-0">{{ participant.first_name }}</h6>
                                 <small>
                                     {% if participant.online %}
                                         Online
@@ -132,6 +132,7 @@
         };
 
 		document.querySelector('#chat-message-submit').onclick = function(e) {
+            moveChatToTop()
 			const messageInputDom = document.querySelector('#chat-message-input');
 			const message = messageInputDom.value;
 			chatSocket.send(JSON.stringify({
@@ -146,9 +147,38 @@
 			chatSocket.send(JSON.stringify({'command': 'fetch_messages'}))	
 		}
 
-		function diffDates(day_one, day_two) {
-		    return (day_one - day_two) / (60 * 60 * 24 * 1000);
-		};
+        function moveChatToTop(){
+            chat_a_li = $('[data-chatId='+chatId+']').parent();
+            // all the LIs above the chat_a_li one
+            var previousAll = chat_a_li.prevAll();
+
+            // only proceed if it's not already on top (no previous siblings)
+            if(previousAll.length > 0) {
+                console.log('test2')
+                // top LI
+                var top = $(previousAll[previousAll.length - 1]);
+
+                // immediately previous LI
+                var previous = $(previousAll[0]);
+
+                // how far up do we need to move the chat_a_li LI?
+                var moveUp = chat_a_li.attr('offsetTop') - top.attr('offsetTop');
+
+                // how far down do we need to move the previous siblings?
+                var moveDown = (chat_a_li.offset().top + chat_a_li.outerHeight()) - (previous.offset().top + previous.outerHeight());
+
+                // let's move stuff
+                chat_a_li.css('position', 'relative');
+                previousAll.css('position', 'relative');
+                chat_a_li.animate({'top': -moveUp});
+                previousAll.animate({'top': moveDown}, {complete: function() {
+                    // rearrange the DOM and restore positioning when we're done moving
+                    chat_a_li.parent().prepend(chat_a_li);
+                    chat_a_li.css({'position': 'static', 'top': 0});
+                    previousAll.css({'position': 'static', 'top': 0}); 
+                }});
+            }
+        }
 
 		function getTime(timestamp) {
 			var timestamp = new Date(timestamp);
