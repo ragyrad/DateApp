@@ -30,3 +30,8 @@ class DialogView(LoginRequiredMixin, View):
         else:
             # redirect to the first chat for this user
             return HttpResponseRedirect(reverse('chat:dialog', args=(request.user.chats.first().id,)))
+
+
+class NoChatView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, 'chat/no_chats.html')

@@ -9,6 +9,8 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from notifications.signals import notify
+
 from .tasks import reset_like
 from .forms import ProfileCreationForm, ProfileEditForm, UploadPhotoForm
 from .models import Profile, Photo, Relationship
@@ -110,6 +112,31 @@ class ProfileListView(LoginRequiredMixin, ListView):
         return queryset
 
 
+def create_match(user, target):
+    user_rlts = Relationship.objects.filter(user=user, target=target).first()
+    target_rlst = Relationship.objects.filter(user=target, target=user).first()
+    user_rlts.match = True
+    user_rlts.match_date = timezone.now()
+    target_rlst.match = True
+    target_rlst.match_date = timezone.now()
+    user_rlts.save()
+    target_rlst.save()
+
+
+def create_chat(user, target):
+    chat = Chat.objects.create()
+    chat.participants.add(user)
+    chat.participants.add(target)
+    chat.save()
+
+
+def delete_chat(user, target):
+    chat = Chat.objects.filter(participants__in=[user]).filter(participants__in=[target]).first()
+    for message in chat.messages.all():
+        message.delete()
+    chat.delete()
+
+
 class LikeView(LoginRequiredMixin, View):
     def get(self, request, slug):
         target_user = Profile.objects.get(slug=slug)
@@ -117,21 +144,13 @@ class LikeView(LoginRequiredMixin, View):
         request.user.relationships.add(target_user, through_defaults={'like': True})
         # If the like is mutual, then we make a match
         if Relationship.objects.filter(user=target_user, target=request.user, like=True):
-            user_rlts = Relationship.objects.filter(user=request.user, target=target_user).first()
-            target_rlst = Relationship.objects.filter(user=target_user, target=request.user).first()
-            user_rlts.match = True
-            user_rlts.match_date=timezone.now()
-            target_rlst.match = True
-            target_rlst.match_date=timezone.now()
-            user_rlts.save()
-            target_rlst.save()
-            # and making chat between these users
-            chat = Chat.objects.create()
-            chat.participants.add(request.user)
-            chat.participants.add(target_user)
-            chat.save()
+            create_match(request.user, target_user)
+            create_chat(request.user, target_user)
+            # send notification about match
+            notify.send(request.user, recipient=target_user, verb=f'You have a new match with:')
+            notify.send(target_user, recipient=request.user, verb=f'You have a new match with:')
 
-
+        # delete the like in a week if it is not mutual
         week_after = timezone.now() + timedelta(weeks=1)
         reset_like.apply_async((request.user.id, target_user.id), eta=week_after)
 
@@ -166,8 +185,5 @@ class MatchDeleteView(LoginRequiredMixin, View):
         for rel in rels:
             rel.delete()
         # and delete chat between these users
-        chat = Chat.objects.filter(participants__in=[user]).filter(participants__in=[target]).first()
-        for message in chat.messages.all():
-            message.delete()
-        chat.delete()
+        delete_chat(user, target)
         return redirect('profiles:matches')

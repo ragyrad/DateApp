@@ -14,15 +14,18 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 
 from django.conf import settings
-from django.conf.urls import url
 from django.conf.urls.static import static
+
+import notifications.urls
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    url(r'^chaining/', include('smart_selects.urls')),
+    re_path(r'^chaining/', include('smart_selects.urls')),
+    re_path('^inbox/notifications/', include(notifications.urls, namespace='notifications')),
     path('', include('profiles.urls', namespace='profiles')),
     path('chat/', include('chat.urls', namespace='chat')),
 ]

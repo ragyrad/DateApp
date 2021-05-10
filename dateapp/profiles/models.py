@@ -37,6 +37,9 @@ connect_default_signals(SubRegion)
 class City(AbstractCity):
     def __str__(self):
         return f'{self.name}'
+
+    class Meta:
+        ordering = ['-population']
 connect_default_signals(City)
 
 
