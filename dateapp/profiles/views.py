@@ -193,9 +193,8 @@ class MatchDeleteView(LoginRequiredMixin, View):
 
 
 class ReadMatchesNotifications(LoginRequiredMixin, View):
-    def post(self, request, id):
-        user = Profile.objects.get(id=id)
-        unread_notifications = user.notifications.unread()
+    def post(self, request):
+        unread_notifications = request.user.notifications.unread()
         for notification in unread_notifications:
             notification.mark_as_read()
         return JsonResponse({'result': 'ok'}, status=200)
