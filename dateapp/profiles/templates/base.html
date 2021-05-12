@@ -40,13 +40,15 @@
       <div class="dropdown mx-5">
         <a class="btn link-light dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
           <i class="fa fa-bell-o"></i>
-          {% if request.user.notifications.unread %}
-            {% live_notify_badge badge_class="badge" %}
-          {% endif %}
+          <span id="notification-counter">
+            {% if request.user.notifications.unread %}
+              {% live_notify_badge badge_class="badge" %}
+            {% endif %}
+          </span>
         </a>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuLink">
           {% for notification in user.notifications.all %}
-            <li class="list-group-item {% if notification.unread %}list-group-item-dark{% endif %}">
+            <li id="notification-item" class="list-group-item {% if notification.unread %}list-group-item-dark{% endif %}">
               <a class="dropdown-item" href="{% url "profiles:profile_detail" notification.actor.slug %}">
                 {{ notification.verb }} {{ notification.actor }}
               </a>
@@ -70,8 +72,10 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+{{ request.user.id|json_script:"user_id" }}
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+<script src="{% static 'js/read_all_matches.js' %}" ></script>
 {% block domready %}
 {% endblock domready %}
 </body>

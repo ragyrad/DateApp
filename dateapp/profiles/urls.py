@@ -39,5 +39,6 @@ urlpatterns = [
     path('skip/<slug:slug>', views.SkipView.as_view(), name='skip'),
     path('matches/', views.MatchListView.as_view(), name='matches'),
     path('matches/delete/<slug:slug>', views.MatchDeleteView.as_view(), name='delete_match'),
+    path('notifications/<str:id>/read_all/', views.ReadMatchesNotifications.as_view(), name='read_matches'),
 ]
 

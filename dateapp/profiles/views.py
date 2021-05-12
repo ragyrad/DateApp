@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from django import forms
 from django.utils import timezone
+from django.http import JsonResponse
 from django.views.generic import View
 from django.shortcuts import render, redirect
 from django.core.files.base import ContentFile
@@ -187,3 +188,12 @@ class MatchDeleteView(LoginRequiredMixin, View):
         # and delete chat between these users
         delete_chat(user, target)
         return redirect('profiles:matches')
+
+
+class ReadMatchesNotifications(LoginRequiredMixin, View):
+    def post(self, request, id):
+        user = Profile.objects.get(id=id)
+        unread_notifications = user.notifications.unread()
+        for notification in unread_notifications:
+            notification.mark_as_read()
+        return JsonResponse({'result': 'ok'}, status=200)
