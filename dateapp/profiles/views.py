@@ -39,7 +39,9 @@ class MyProfileView(LoginRequiredMixin, View):
     def get(self, request):
         user = request.user
         age = user.get_age()
-        form = ProfileEditForm(initial={'description': user.description, 'sex_looking_for': user.sex_looking_for})
+        form = ProfileEditForm(initial={'description': user.description,
+                                        'sex_looking_for': user.sex_looking_for,
+                                        'place_looking_for': user.place_looking_for})
         return render(request, 'profiles/my_profile.html', {'form': form, 'user': user, 'age': age})
 
     def post(self, request):
