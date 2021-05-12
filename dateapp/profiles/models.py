@@ -56,8 +56,7 @@ class Profile(AbstractUser):
         ('country', 'My country'),
         ('word', 'All word')
     )
-
-    first_name = models.CharField(max_length=50)
+    first_name = models.CharField(max_length=20)
 
     slug = models.SlugField(max_length=100, unique=True)
     sex = models.CharField(max_length=10, choices=SEX_CHOICES, default='male')
@@ -73,7 +72,7 @@ class Profile(AbstractUser):
     )
     place_looking_for = models.CharField(max_length=10, choices=PLACE_CHOICES, default='city')
     date_of_birth = models.DateField(default=timezone.now)
-    description = models.TextField(max_length=7000, blank=True)
+    description = models.TextField(max_length=1000, blank=True)
     relationships = models.ManyToManyField('self' , through='Relationship', symmetrical=False)
 
     def get_age(self):

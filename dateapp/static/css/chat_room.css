@@ -1,3 +1,7 @@
+p {
+    word-wrap: break-word;
+}
+
 .card {
     background: #fff;
     transition: .5s;

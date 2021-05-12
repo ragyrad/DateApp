@@ -52,7 +52,7 @@ class MyProfileView(LoginRequiredMixin, View):
             request.user.sex_looking_for = temp_user.sex_looking_for
             request.user.place_looking_for = temp_user.place_looking_for
             request.user.save()
-            return redirect('profiles:my_profile')
+            return JsonResponse({'result': 'ok'}, status=200)
 
 
 class PhotoUploadView(LoginRequiredMixin, View):
