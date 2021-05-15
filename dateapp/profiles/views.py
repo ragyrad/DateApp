@@ -15,7 +15,7 @@ from notifications.signals import notify
 from .tasks import reset_like
 from .forms import ProfileCreationForm, ProfileEditForm, UploadPhotoForm
 from .models import Profile, Photo, Relationship
-from chat.models import Chat
+from chat import chat
 
 
 class UserRegisterView(View):
@@ -126,20 +126,6 @@ def create_match(user, target):
     target_rlst.save()
 
 
-def create_chat(user, target):
-    chat = Chat.objects.create()
-    chat.participants.add(user)
-    chat.participants.add(target)
-    chat.save()
-
-
-def delete_chat(user, target):
-    chat = Chat.objects.filter(participants__in=[user]).filter(participants__in=[target]).first()
-    for message in chat.messages.all():
-        message.delete()
-    chat.delete()
-
-
 class LikeView(LoginRequiredMixin, View):
     def get(self, request, slug):
         target_user = Profile.objects.get(slug=slug)
@@ -148,7 +134,7 @@ class LikeView(LoginRequiredMixin, View):
         # If the like is mutual, then we make a match
         if Relationship.objects.filter(user=target_user, target=request.user, like=True):
             create_match(request.user, target_user)
-            create_chat(request.user, target_user)
+            chat.create_chat(request.user, target_user)
             # send notification about match
             notify.send(request.user, recipient=target_user, verb=f'You have a new match with:')
             notify.send(target_user, recipient=request.user, verb=f'You have a new match with:')
@@ -188,7 +174,7 @@ class MatchDeleteView(LoginRequiredMixin, View):
         for rel in rels:
             rel.delete()
         # and delete chat between these users
-        delete_chat(user, target)
+        chat.delete_chat(user, target)
         return redirect('profiles:matches')
 
 

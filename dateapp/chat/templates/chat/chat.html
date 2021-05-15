@@ -12,16 +12,13 @@
 	    <div class="card chat-app">
 	        <div id="plist" class="people-list">
 	            <div class="input-group">
-	                <div class="input-group-prepend">
-	                    <span class="input-group-text"><i class="fa fa-search"></i></span>
-	                </div>
-	                <input type="text" class="form-control" placeholder="Search...">
+	                <input id="chat-search" type="text" class="form-control" placeholder="Search...">
 	            </div>
-	            <ul class="list-unstyled chat-list mt-2 mb-0">
+	            <ul id="chat-names" class="list-unstyled chat-list mt-2 mb-0">
 	                {% for user_chat in chats %}
 						{% with other_user=user_chat|get_participant:username %}
 	                    <a href="{% url 'chat:dialog' user_chat.id %}">
-		                	<li class="clearfix {% if chat_id == user_chat.id %}active{% endif %}" data-chatId="{{ user_chat.id }}">
+		                	<li class="clearfix {% if chat_id == user_chat.id %}active{% endif %} chat-name" data-chatId="{{ user_chat.id }}">
 		                    {% if other_user.photos.all %}
                             	<img class="rounded-circle" src="{% thumbnail other_user.photos.first.image 70x70 crop="smart" %}"/>
                             {% else %}
@@ -141,6 +138,19 @@
 				'from': username
 			}));
 			messageInputDom.value = '';
+		};
+
+		document.querySelector('#chat-search').onkeyup = function(e) {
+	      var messageInput = this.value.toLowerCase();
+	      var items = document.getElementsByClassName("chat-name");
+	      for (i = 0; i < items.length; i++) {
+	        let chatName = items[i].getElementsByClassName("name")[0].innerText.toLowerCase()
+	        if (!(chatName.includes(messageInput))) {
+	          $(items[i]).hide();
+	        } else {
+	          $(items[i]).show();
+	        }
+	      }
 		};
 
 		function fetchMessages() {
