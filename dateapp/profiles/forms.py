@@ -45,3 +45,23 @@ class ProfileEditForm(forms.ModelForm):
 class UploadPhotoForm(forms.Form):
     """Form so that the user can upload the photo for profile"""
     photos = forms.ImageField(widget=forms.FileInput(attrs={'multiple': 'multiple'}))
+
+
+class ProfileSettingsForm(forms.ModelForm):
+    """Form for change name, country and city"""
+
+    class Meta:
+        model = Profile
+        fields = ('first_name', 'country', 'city')
+
+    def clean_country(self):
+        country = self.cleaned_data['country']
+        if country is None:
+            raise forms.ValidationError('Invalid country - it cannot be empty.')
+        return country
+
+    def clean_city(self):
+        city = self.cleaned_data['city']
+        if city is None:
+            raise forms.ValidationError('Invalid city - it cannot be empty.')
+        return city

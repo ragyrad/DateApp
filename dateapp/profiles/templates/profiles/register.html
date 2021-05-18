@@ -16,9 +16,11 @@
         <button type="submit" class="btn btn-success">Register</button>
         </form>
     </div>
+{% endblock content %}
 
+{% block domready %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script src="{% static 'smart-selects/admin/js/bindfields.js' %}"></script>
     <script src="{% static 'smart-selects/admin/js/chainedfk.js' %}"></script>
-{% endblock content %}
+{% endblock domready %}
 	

@@ -15,7 +15,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from notifications.signals import notify
 
 from .tasks import reset_like
-from .forms import ProfileCreationForm, ProfileEditForm, UploadPhotoForm
+from .forms import ProfileCreationForm, ProfileEditForm, UploadPhotoForm, ProfileSettingsForm
 from .models import Profile, Photo, Relationship
 from chat import chat
 
@@ -192,9 +192,29 @@ class MatchDeleteView(LoginRequiredMixin, View):
         return redirect('profiles:matches')
 
 
-class ReadMatchesNotifications(LoginRequiredMixin, View):
+class ReadMatchesNotificationsView(LoginRequiredMixin, View):
     def post(self, request):
         unread_notifications = request.user.notifications.unread()
         for notification in unread_notifications:
             notification.mark_as_read()
         return JsonResponse({'result': 'ok'}, status=200)
+
+
+class ProfileSettingsView(LoginRequiredMixin, View):
+    """View on which the user can change the name, country, city and password"""
+    def get(self, request):
+        user = request.user
+        form = ProfileSettingsForm(initial={'first_name': user.first_name,
+                                            'country': user.country,
+                                            'city': user.city,})
+        return render(request, 'profiles/profile_settings.html', {'form': form})
+
+    def post(self, request):
+        form = ProfileSettingsForm(self.request.POST)
+        if form.is_valid():
+            user = self.request.user
+            user.first_name = form.cleaned_data['first_name']
+            user.country = form.cleaned_data['country']
+            user.city = form.cleaned_data['city']
+            user.save()
+            return JsonResponse({'result': 'ok'}, status=200)
