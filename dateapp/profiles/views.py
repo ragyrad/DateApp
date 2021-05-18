@@ -1,5 +1,7 @@
 from datetime import timedelta
 
+from dateutil.relativedelta import relativedelta
+
 from django import forms
 from django.utils import timezone
 from django.http import JsonResponse
@@ -41,17 +43,21 @@ class MyProfileView(LoginRequiredMixin, View):
         age = user.get_age()
         form = ProfileEditForm(initial={'description': user.description,
                                         'sex_looking_for': user.sex_looking_for,
+                                        'min_age_looking_for': user.min_age_looking_for,
+                                        'max_age_looking_for': user.max_age_looking_for,
                                         'place_looking_for': user.place_looking_for})
         return render(request, 'profiles/my_profile.html', {'form': form, 'user': user, 'age': age})
 
     def post(self, request):
         form = ProfileEditForm(request.POST)
         if form.is_valid():
-            temp_user = form.save(commit=False)
-            request.user.description = temp_user.description
-            request.user.sex_looking_for = temp_user.sex_looking_for
-            request.user.place_looking_for = temp_user.place_looking_for
-            request.user.save()
+            user = request.user
+            user.description = form.cleaned_data['description']
+            user.min_age_looking_for = form.cleaned_data['min_age_looking_for']
+            user.max_age_looking_for = form.cleaned_data['max_age_looking_for']
+            user.sex_looking_for = form.cleaned_data['sex_looking_for']
+            user.place_looking_for = form.cleaned_data['place_looking_for']
+            user.save()
             return JsonResponse({'result': 'ok'}, status=200)
 
 
@@ -112,6 +118,14 @@ class ProfileListView(LoginRequiredMixin, ListView):
             queryset = queryset.filter(country=user.country)
             if place_filter == 'city':
                 queryset = queryset.filter(city=user.city)
+
+        # filter by age
+        min_age = user.min_age_looking_for
+        max_age = user.max_age_looking_for
+        oldest_date = timezone.now() - relativedelta(years=max_age + 1)  # +1 to include in the range
+        youngest_date = timezone.now() - relativedelta(years=min_age)
+        queryset = queryset.filter(date_of_birth__range=[oldest_date, youngest_date])
+
         return queryset
 
 

@@ -8,12 +8,13 @@ from .models import Profile
 
 class ProfileCreationForm(UserCreationForm):
     """User registration form"""
+
     class Meta(UserCreationForm.Meta):
         model = Profile
         fields = ('username', 'first_name', 'email', 'sex', 'sex_looking_for', 'country', 'city', 'date_of_birth')
 
     def clean_date_of_birth(self):
-        date_of_birth =  self.cleaned_data['date_of_birth']
+        date_of_birth = self.cleaned_data['date_of_birth']
         if date.today() < date_of_birth:
             raise forms.ValidationError('Invalid date - date of birth in the future.')
         # int(True) = 1, int(False) = 0
@@ -27,6 +28,7 @@ class ProfileCreationForm(UserCreationForm):
 
 class ProfileChangeForm(UserChangeForm):
     """User change data form"""
+
     class Meta:
         model = Profile
         fields = ('username', 'first_name', 'email', 'sex', 'sex_looking_for', 'country', 'city', 'date_of_birth')
@@ -34,13 +36,12 @@ class ProfileChangeForm(UserChangeForm):
 
 class ProfileEditForm(forms.ModelForm):
     """A form so that the user can change the description, search gender, and location"""
+
     class Meta:
         model = Profile
-        fields = ('description', 'sex_looking_for', 'place_looking_for')
+        fields = ('description', 'min_age_looking_for', 'max_age_looking_for', 'sex_looking_for', 'place_looking_for')
 
 
 class UploadPhotoForm(forms.Form):
     """Form so that the user can upload the photo for profile"""
     photos = forms.ImageField(widget=forms.FileInput(attrs={'multiple': 'multiple'}))
-
-

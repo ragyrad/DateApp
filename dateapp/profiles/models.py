@@ -4,9 +4,11 @@ from datetime import date, datetime, timedelta
 
 from django.db import models
 from django.utils import timezone
-from django.core.cache import cache
 from django.utils.text import slugify
 from django.contrib.auth.models import AbstractUser
+from django.core.cache import cache
+from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 from cities_light.receivers import connect_default_signals
 from cities_light.models import AbstractCountry, AbstractRegion, AbstractSubRegion, AbstractCity
@@ -15,22 +17,29 @@ from smart_selects.db_fields import ChainedForeignKey
 
 from dateapp import settings
 
+
 def rand_slug():
     return ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(6))
 
 
 class Country(AbstractCountry):
     pass
+
+
 connect_default_signals(Country)
 
 
 class Region(AbstractRegion):
     pass
+
+
 connect_default_signals(Region)
 
 
 class SubRegion(AbstractSubRegion):
     pass
+
+
 connect_default_signals(SubRegion)
 
 
@@ -40,6 +49,8 @@ class City(AbstractCity):
 
     class Meta:
         ordering = ['-population']
+
+
 connect_default_signals(City)
 
 
@@ -61,6 +72,8 @@ class Profile(AbstractUser):
     slug = models.SlugField(max_length=100, unique=True)
     sex = models.CharField(max_length=10, choices=SEX_CHOICES, default='male')
     sex_looking_for = models.CharField(max_length=10, choices=SEX_CHOICES, default='female')
+    min_age_looking_for = models.IntegerField(default=18, validators=[MinValueValidator(18), MaxValueValidator(100)])
+    max_age_looking_for = models.IntegerField(default=30, validators=[MinValueValidator(18), MaxValueValidator(100)])
     email = models.EmailField(unique=True)
     country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True)
     city = ChainedForeignKey(
@@ -73,7 +86,7 @@ class Profile(AbstractUser):
     place_looking_for = models.CharField(max_length=10, choices=PLACE_CHOICES, default='city')
     date_of_birth = models.DateField(default=timezone.now)
     description = models.TextField(max_length=1000, blank=True)
-    relationships = models.ManyToManyField('self' , through='Relationship', symmetrical=False)
+    relationships = models.ManyToManyField('self', through='Relationship', symmetrical=False)
 
     def get_age(self):
         """Function that calculate age of the user"""
@@ -92,15 +105,21 @@ class Profile(AbstractUser):
         return False
 
     class Meta:
-        ordering = ('-first_name',)
-
-    def __str__(self):
-        return self.first_name
+        ordering = ('username',)
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(rand_slug() + '_' + str(self.first_name))
         super(Profile, self).save(*args, **kwargs)
+
+    def clean(self):
+        if self.min_age_looking_for > self.max_age_looking_for:
+            raise ValidationError('The minimum age cannot be greater than the maximum age.')
+        elif self.max_age_looking_for < self.max_age_looking_for:
+            raise ValidationError('The maximum age cannot be less than the minimum')
+
+    def __str__(self):
+        return self.first_name
 
 
 class Photo(models.Model):
