@@ -15,7 +15,7 @@ When a user logs in he goes to his profile page. Here he can write a description
 
 On the photo upload page, he can select the photos he wants to upload.
 
-![изображение](https://user-images.githubusercontent.com/72472295/119335776-7b513280-bc95-11eb-81c9-df44c2f9c9ca.png)
+![изображение](https://user-images.githubusercontent.com/72472295/119336292-28c44600-bc96-11eb-9314-095027b0b36a.png)
 
 When the user has selected the desired photos, he must click the green button to upload a photo.
 
