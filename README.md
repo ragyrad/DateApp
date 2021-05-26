@@ -24,3 +24,22 @@ When the user has selected the desired photos, he must click the green button to
 All photos uploaded by the user appear on this page, here he can delete them. Maximum user can have 8 photos. 
 
 ![изображение](https://user-images.githubusercontent.com/72472295/119336068-cbc89000-bc95-11eb-9514-ac7875c2c2c3.png)
+
+In the "people" tab, the profiles of other users are displayed, which you can skip or like. After any of these actions, the profile will no longer be displayed in this tab. But it will appear again in a day if the profile is skipped. If you like the profile and there is no mutual like within a week, the like will be reset and the profile will be displayed again. Celery is userd for this.
+
+![изображение](https://user-images.githubusercontent.com/72472295/119642119-10cdfd00-be23-11eb-897b-3ef39b8e36d5.png)
+
+In case of mutual likes:
+1) Both users receive notifications 
+
+![изображение](https://user-images.githubusercontent.com/72472295/119649344-2e9f6000-be2b-11eb-80ee-561fb74a2042.png)
+
+2) The user is added to the "matches" tab
+
+![изображение](https://user-images.githubusercontent.com/72472295/119649446-5262a600-be2b-11eb-8fc0-625126a2954a.png)
+
+3) A chat is created between the users.
+
+![изображение](https://user-images.githubusercontent.com/72472295/119649550-6e664780-be2b-11eb-8e48-c97add426496.png)
+
+
