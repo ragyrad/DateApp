@@ -1,5 +1,5 @@
-# DateApp
-Date app.
+# DatingApp
+Dating app.
 
 When the user enters the site sees the log-in form. If he has an account he can log in, otherwise he will need to register(there is a button for it below). 
 
